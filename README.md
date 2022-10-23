@@ -5,9 +5,10 @@
 
 # 直线编队飞行
 ![img](https://github.com/publicboyfriend/Uav-swarm-formation/blob/main/image/output.gif)
-![img](https://github.com/publicboyfriend/Uav-swarm-formation/blob/main/image/output1.gif)
+
 
 # 三角编队飞行
+![img](https://github.com/publicboyfriend/Uav-swarm-formation/blob/main/image/output1.gif)
 ![img](https://github.com/publicboyfriend/Uav-swarm-formation/blob/main/image/output2.gif)
 
 # 集群编队飞行视频
