@@ -1,4 +1,3 @@
-
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
 
@@ -37,7 +36,7 @@ class Commander(object):
             data, addr = s.recvfrom(2048)
             if not data:
                 break
-            if addr[0] == '192.168.3.28':  #"0号ip" 这是leader机
+            if addr[0] == '192.168.3.38':  #"0号ip" 这是leader机
                 self.pose[0] = self.ListtoArray(data)
             elif addr[0] == '192.168.3.30':  #"1号ip":
                 self.pose[1] = self.ListtoArray(data)

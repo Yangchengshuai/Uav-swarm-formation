@@ -11,6 +11,7 @@ from geometry_msgs.msg import PoseStamped, TwistStamped
 from mavros_msgs.srv import CommandBool, SetMode
 
 from Yformation_dict import formation_dict_3 as formation_dict
+from Yformation_dict import startPosition_3 as startPosition
 
 # @Description: 接收来自主机的命令并处理;在飞机上运行；需要将leader坐标系下的命令转换为本地机系下的命令
 
@@ -80,9 +81,9 @@ class Follower_uav(object):
 
          #self.leaderPose[0] + self.origin_formation[0] 这两个是相对于leader系下的目标位置
          #输出的速度是要相对于自身的，所以要转化到无人机自身坐标系：-0 -1 -0是减去初始位置，即可到自身坐标系下
-        self.cmd_vel_enu.twist.linear.x = self.Kp * ((self.leaderPose[0] + self.origin_formation[0] -0- self.pose.pose.position.x))
-        self.cmd_vel_enu.twist.linear.y = self.Kp * ((self.leaderPose[1] + self.origin_formation[1] +1 - self.pose.pose.position.y))
-        self.cmd_vel_enu.twist.linear.z = self.Kp * ((self.leaderPose[2] + self.origin_formation[2] - 0-self.pose.pose.position.z))
+        self.cmd_vel_enu.twist.linear.x = self.Kp * ((self.leaderPose[0] + self.origin_formation[0] - startPosition["follower2"][0] - self.pose.pose.position.x))
+        self.cmd_vel_enu.twist.linear.y = self.Kp * ((self.leaderPose[1] + self.origin_formation[1] - startPosition["follower2"][1] - self.pose.pose.position.y))
+        self.cmd_vel_enu.twist.linear.z = self.Kp * ((self.leaderPose[2] + self.origin_formation[2] - startPosition["follower2"][2] - self.pose.pose.position.z))
         self.cmd_vel_enu.twist.linear.x = self.cmd_vel_enu.twist.linear.x + self.Kp_avoid * self.my_avoid[0]
         self.cmd_vel_enu.twist.linear.y = self.cmd_vel_enu.twist.linear.y + self.Kp_avoid * self.my_avoid[1]
         self.cmd_vel_enu.twist.linear.z = self.cmd_vel_enu.twist.linear.z + self.Kp_avoid * self.my_avoid[2]

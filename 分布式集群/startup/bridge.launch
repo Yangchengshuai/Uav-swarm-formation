@@ -1,0 +1,41 @@
+<launch>
+  <!-- Launch static transform publishers -->
+  <node pkg="tf" type="static_transform_publisher" name="tf_baseLink_cameraPose" ns="follower1"
+        args="0 0 0 3.1416 0.7854 0 base_link camera_pose_frame 1000"/>
+
+  <!-- Launch static transform publishers -->
+  <node pkg="tf" type="static_transform_publisher" name="tf_odom_cameraOdom" ns="follower1"
+        args="0 0 0 0 0 0 odom camera_odom_frame 1000"/>
+
+  <!-- launch node to throttle images for logging -->
+  <node name="drop_image1" pkg="topic_tools" type="drop" output="screen" ns="follower1"
+    args="/follower1/camera/fisheye1/image_raw  9 10">
+  </node>
+  <node name="drop_image2" pkg="topic_tools" type="drop" output="screen" ns="follower1"
+    args="/follower1/camera/fisheye2/image_raw  9 10">
+  </node>
+
+  <!-- Throttle odometry messages to a fixed rate around 25Hz -->
+  <node name="odom_throttler" type="drop" pkg="topic_tools" ns="follower1"
+    args="/follower1/odom/sample 7 8 /follower1/odom/sample_throttled" >
+  </node>
+
+
+  <!-- Launch Realsense Camera -->
+  <!-- <include file="$(find realsense2_camera)/launch/rs_d400_and_t265.launch" > -->
+  <include file="$(find realsense2_camera)/launch/rs_t265.launch" >
+        <!-- <arg name="camera1"  value="camera"/>
+	<arg name="camera2"  value="d435"/> -->
+  </include>
+
+  <env name="ROSCONSOLE_CONFIG_FILE" value="$(find px4_realsense_bridge)/resource/custom_rosconsole.conf"/>
+
+  <arg name="input_topic" default="[/follower1/odom/sample]"/>
+
+  <!-- Bridge node -->
+  <node name="px4_realsense_bridge_node" pkg="px4_realsense_bridge" type="px4_realsense_bridge_node" output="screen" ns="follower1" >
+    <rosparam param="input_topic" subst_value="True">$(arg input_topic)</rosparam>
+  </node>
+
+</launch>
+
