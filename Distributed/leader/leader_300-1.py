@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
-
+# @Author: chengshuai
+# @Date: 2022-11.16
 import socket
 import numpy
 import threading
@@ -14,7 +15,7 @@ from Yformation_dict import formation_dict_3 as formation_dict
 from Yformation_dict import startPosition_3 as startPosition
 
 
-class Follower_uav(object):
+class Leader_uav(object):
 
     def __init__(self, num=3, uavId=0):
         #无人机ID和编队飞机总数量
@@ -198,13 +199,13 @@ class Follower_uav(object):
 
     def process(self):
         #args是关键字参数，需要加上名字，写成args=(self,)
-        th1 = threading.Thread(target=Follower_uav.receive_cmd, args=(self, ))
-        th2 = threading.Thread(target=Follower_uav.cmd, args=(self, ))
+        th1 = threading.Thread(target=Leader_uav.receive_cmd, args=(self, ))
+        th2 = threading.Thread(target=Leader_uav.cmd, args=(self, ))
         th2.start()
         th1.start()
 
 
 if __name__ == '__main__':
-    rospy.init_node('leader')
-    commander = Follower_uav()
+    rospy.init_node('leader_recept')
+    commander = Leader_uav()
     commander.process()

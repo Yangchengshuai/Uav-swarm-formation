@@ -1,6 +1,5 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
-# @Description: 接收来自主机的命令并处理
 # @Author: chengshuai
 # @Date: 2022-11.16
 
