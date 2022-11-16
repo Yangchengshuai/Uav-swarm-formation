@@ -142,12 +142,11 @@ T265是一个尺寸小、功耗低的完整的嵌入式SLAM解决方案，它将
 
 
 
-
-
 ## 集群编队飞行视频
 [无人机集群编队飞行](https://www.bilibili.com/video/BV1jd4y1y7d8/?spm_id_from=333.337.search-card.all.click&vd_source=8c9644ebf9f2a4932abb6080dd498157)
 ### 直线编队飞行
-![在这里插入图片描述](https://img-blog.csdnimg.cn/6afbc72361b44b8ebdf3acf673602429.gif)
+![img](https://github.com/Yangchengshuai/Uav-swarm-formation/blob/main/image/output.gif)
 ### 三角编队飞行
-![在这里插入图片描述](https://img-blog.csdnimg.cn/4e33de083aa14ba19d987cfc1653d9ae.gif)
-![在这里插入图片描述](https://img-blog.csdnimg.cn/8375d8b1d2fc4224a83432d04ee2b324.gif)
+![img](https://github.com/Yangchengshuai/Uav-swarm-formation/blob/main/image/output1.gif)
+
+![img](https://github.com/Yangchengshuai/Uav-swarm-formation/blob/main/image/output2.gif)
