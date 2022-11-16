@@ -7,32 +7,34 @@
 ## 集群控制简介
 多机器人群体控制系统一般分为**集中式控制结构**和**分布式控制结构**。
 
-![img](https://github.com/publicboyfriend/Uav-swarm-formation/blob/main/image/formation.png)
-
 ![img](https://vipkshttps12.wiz.cn/editor/fa89fad0-2e2f-11ec-8668-3755f68e41df/d8957571-cc1d-4a95-8e64-92a8ae1d5cab/resources/B-QDf1f0R6I4I7JZq5LenXhw8bjclzLgO4NM9C0IsfE.jpeg?token=W.dJxBp3XaPW50CsJoP0PwSuBIYjDNTAW7C1dSgTs4iBkLEGzdlbawu3fiO3rPhLk)
 
 **集中式控制结构：**
 一个主控单元，集中掌握了环境中全局信息和所有机器人的信息，进行集中式处理任务与资源分配由主控单元合理分配给每一个机器人，每个机器人只需负责数据的输入和输出，数据的存储和控制处理由主控执行。结构较为简单，系统管理方便。
 **缺点：**（1）计算复杂度增大，反应速度慢，机器人工作效率降低；（2）主控单元出现故障，会导致整个系统陷入瘫痪。
-**分布式控制结构：**系统不存在控制与被控关系，机器人之间对等，互相信息交互。自主处理实时数据并根据数据规划出一条路径。分布式控制结构可以增加机器人的数目，灵活性较高，适用于动态环境下的工作空间。
+
+**分布式控制结构**：系统不存在控制与被控关系，机器人之间对等，互相信息交互。自主处理实时数据并根据数据规划出一条路径。分布式控制结构可以增加机器人的数目，灵活性较高，适用于动态环境下的工作空间。
 **缺点：**缺乏全局时钟性，机器人之间的协调合作难，获取信息有限难以实现全局最优解。
 
-**混合式控制结构：**一个主控单元控制所有机器人，获取机器人当前位置、环境信息、处理数据和制定策略等，为每一个机器人提供最新的全局信息，而每一个机器人采用分布式控制结构，都是一个独立平等的“个体”，与其他机器人实现信息的交流和互换，由主控单元获取的全局信息自主规划路径。混合式结构中即包含统一全局的中央管理模块，也采用分布式结构中每个成员机器人之间的通信方式。可以看出混合式结构集中了集中式与分布式结构的优点，这样的控制结构避免了成员机器人之间的任务冲突同时又加强了合作。
+**混合式控制结构**：一个主控单元控制所有机器人，获取机器人当前位置、环境信息、处理数据和制定策略等，为每一个机器人提供最新的全局信息，而每一个机器人采用分布式控制结构，都是一个独立平等的“个体”，与其他机器人实现信息的交流和互换，由主控单元获取的全局信息自主规划路径。混合式结构中即包含统一全局的中央管理模块，也采用分布式结构中每个成员机器人之间的通信方式。可以看出混合式结构集中了集中式与分布式结构的优点，这样的控制结构避免了成员机器人之间的任务冲突同时又加强了合作。
 
 ## 本系统所用方案优劣式介绍
-**方案介绍：**本系统采用混合式集群控制模式，主控机接收处理所有无人机的状态信息，并且发送任务指令给到无人机。无人机分为leader机和follower机，leader机一架， follower机若干架。无人机接收主控机的任务指令，自主处理实时数据并根据数据规划出一条路径。
+**方案介绍**：本系统采用混合式集群控制模式，主控机接收处理所有无人机的状态信息，并且发送任务指令给到无人机。无人机分为leader机和follower机，leader机一架， follower机若干架。无人机接收主控机的任务指令，自主处理实时数据并根据数据规划出一条路径。
 
-**优点：**本机的机载编队算法，具有效率高、节省资源等特点，能够为使用者节省更多的开销，更加快速使单体无人机达到目标点。通讯模块主要采用socket通讯，传输数据为字节级，传输数据可自定义，数据量小，传输数据时间短，性能高。避障模块采用基于球形几何体的编队避障算法，具有高效、低算力的特性，避障算法会对两个无人机施加一个弹簧的力，将两个无人机分离，再结合原始规划路径实现高灵敏避障。
+**优点**：本机的机载编队算法，具有效率高、节省资源等特点，能够为使用者节省更多的开销，更加快速使单体无人机达到目标点。通讯模块主要采用socket通讯，传输数据为字节级，传输数据可自定义，数据量小，传输数据时间短，性能高。避障模块采用基于球形几何体的编队避障算法，具有高效、低算力的特性，避障算法会对两个无人机施加一个弹簧的力，将两个无人机分离，再结合原始规划路径实现高灵敏避障。
 
-**缺点：**避障模块只有机间避障，没有对障碍物的路径规划模块，需要后续进行优化。定位模块因为采用的是双目视觉，所以对光照变化和动态场景有一定的敏感性。
+**缺点**：避障模块只有机间避障，没有对障碍物的路径规划模块，需要后续进行优化。定位模块因为采用的是双目视觉，所以对光照变化和动态场景有一定的敏感性。
 
 
 # 硬件方案
 ## 飞行平台介绍
-飞行平台的硬件包括一个笔记本（主控机）和若干架无人机，无人机搭载英伟达nx板、t265双目摄像头、PX4飞控、WiFi模块等。
+飞行平台的硬件包括一个笔记本（主控机）和若干架无人机，无人机搭载的传感器包括：T265双目相机、JETSON Xavier NX板载计算机、深度相机D435i、WiFi模块，内置基于PX4-ROS的控制模块和SLAM、编队、避障等多种算法。适用于无GPS环境下基于视觉的无人机编队定位/导航/避障算法的验证与开发。
+
+
+
 ## 无人机集群编队
 ### 通信硬件系统
-   目前机器人常用的通讯架构包括B/S，C/S，MQTT，ROS通讯等。Browser/Server，这个也是我们在日常生活当中经常用到一个服务架构模式，最常见的就是我们在浏览网站的时候，我们以Browser的身份向Server服务器发起访问，从而看到我们想看到的内容。而Client/Server中Socket套接字是C/S架构的实现方式，主要是TCP/UDP通讯，socket通信机制，可以应用于计算机不同进程之间通信，包括同一台计算机和网络中不同计算机之间的进程之间通信，结果就是支持分布在网络中的各个服务端/客户端的通信。MQTT（消息队列遥测传输协议），是一种基于发布/订阅模式的”轻量级”通讯协议，该协议构建于TCP/IP协 议上。ROS通讯包含的话题、服务、动作机制三种通讯方式。
+目前机器人常用的通讯架构包括B/S，C/S，MQTT，ROS通讯等。Browser/Server，这个也是我们在日常生活当中经常用到一个服务架构模式，最常见的就是我们在浏览网站的时候，我们以Browser的身份向Server服务器发起访问，从而看到我们想看到的内容。而Client/Server中Socket套接字是C/S架构的实现方式，主要是TCP/UDP通讯，socket通信机制，可以应用于计算机不同进程之间通信，包括同一台计算机和网络中不同计算机之间的进程之间通信，结果就是支持分布在网络中的各个服务端/客户端的通信。MQTT（消息队列遥测传输协议），是一种基于发布/订阅模式的”轻量级”通讯协议，该协议构建于TCP/IP协 议上。ROS通讯包含的话题、服务、动作机制三种通讯方式。
 本系统通讯采用WiFi无线通讯，主控机与无人机需要安装WiFi模块，在同一WiFi路由下进行socket字节流通讯和ROS话题、服务通讯。另外可以扩展添加UWB机间测距信号，用相对距离来保持编队队形。
 
 ### 软件系统结构
@@ -40,10 +42,6 @@
 ![img](https://github.com/publicboyfriend/Uav-swarm-formation/blob/main/image/follower1.png)
 
 ![img](https://github.com/publicboyfriend/Uav-swarm-formation/blob/main/image/topic.png)
-
-![img](https://vipkshttps12.wiz.cn/editor/fa89fad0-2e2f-11ec-8668-3755f68e41df/d8957571-cc1d-4a95-8e64-92a8ae1d5cab/resources/iFRHjj9kn_rYuUFe7tW3zy2ceTQqVvhfS1sNpmzfdKY.png?token=W.dJxBp3XaPW50CsJoP0PwSuBIYjDNTAW7C1dSgTs4iBkLEGzdlbawu3fiO3rPhLk)
-
-![img](https://vipkshttps12.wiz.cn/editor/fa89fad0-2e2f-11ec-8668-3755f68e41df/d8957571-cc1d-4a95-8e64-92a8ae1d5cab/resources/vK-iQjQOlYP2P0kdMmqwOxFZKHYg0c1iTvYZIXFnEwI.png?token=W.dJxBp3XaPW50CsJoP0PwSuBIYjDNTAW7C1dSgTs4iBkLEGzdlbawu3fiO3rPhLk)
 
 软件运行流程：
 
@@ -76,7 +74,7 @@ exit 0
 
 ![img](https://vipkshttps12.wiz.cn/editor/fa89fad0-2e2f-11ec-8668-3755f68e41df/d8957571-cc1d-4a95-8e64-92a8ae1d5cab/resources/8QT1SUulbA0YqNPNxXJgXwTU3ukjnPsr_IAR4AO7Tpo.png?token=W.dJxBp3XaPW50CsJoP0PwSuBIYjDNTAW7C1dSgTs4iBkLEGzdlbawu3fiO3rPhLk)
 
-3.   将无人机按照程序设定摆好位置，开机
+3. 将无人机按照程序设定摆好位置，开机
 4. 在无人机上运行startup.sh文件，启动通讯模块和定位模块
 5. 将无人机调成position模式
 6. 笔记本（主控机）上运行commander.py文件，开启键盘控制
@@ -94,7 +92,7 @@ T265是一个尺寸小、功耗低的完整的嵌入式SLAM解决方案，它将
 
 **通讯方式1：可实现混合式集群编队**
 
-![img](https://vipkshttps12.wiz.cn/editor/fa89fad0-2e2f-11ec-8668-3755f68e41df/d8957571-cc1d-4a95-8e64-92a8ae1d5cab/resources/r8OJGvbxQG4aZafZY6VHt14ruh7JUlSzNeEX50fsa4o.jpg?token=W.dJxBp3XaPW50CsJoP0PwSuBIYjDNTAW7C1dSgTs4iBkLEGzdlbawu3fiO3rPhLk)
+![img](https://github.com/Yangchengshuai/Uav-swarm-formation/blob/main/image/communication1.jpg)
 
 主控机与无人机之间用socket创建UDP连接,无人机将自身位置数据利用UDP点对点的传给主控机进行处理，主控机将任务指令采用广播的方式传给各无人机。无人机机间通讯采用ROS的架构，follower机订阅leader机的位置信息，无人机根据接受的任务指令和leader位置信息，进行相对于leader机坐标系下的编队任务飞行。
 
@@ -102,15 +100,17 @@ T265是一个尺寸小、功耗低的完整的嵌入式SLAM解决方案，它将
 
 为什么要通过笔记本中转呢？而不是主从机直接ROS通讯呢？ROS是支持分布式运行节点，leader机与follower机可以用ROS节点的方式相互通信。第一点原因是采用socket通讯，传输数据为字节级，传输数据可自定义，数据量小，传输数据时间短，性能高。第二点原因是因为当时测试ROS节点通讯的时候，没有解决mavros话题重命名的问题，测试没有通过。
 
+
+
 **通讯方式2：可实现分布式集群编队**
 
-![img](https://vipkshttps12.wiz.cn/editor/fa89fad0-2e2f-11ec-8668-3755f68e41df/d8957571-cc1d-4a95-8e64-92a8ae1d5cab/resources/GA8x0bzFQuwGg3OREIUIBWwcN5l0729YLMetXeNyudA.jpg?token=W.dJxBp3XaPW50CsJoP0PwSuBIYjDNTAW7C1dSgTs4iBkLEGzdlbawu3fiO3rPhLk)
+![img](https://github.com/Yangchengshuai/Uav-swarm-formation/blob/main/image/communication2.jpg)
 
 目前的ROS1就是用中心点的通信方式，也就是说ROS Master是整个ROS节点的中心，组成一个星状网络结构，这个ROS Master是和其他节点的通信桥梁。有点不好的因素是ROS Mater这个中心节点出现异常，整个组网就失效了。
 
 利用ROS分布式消息的模式，比如leader机与follower机发送指令，只需要加一个前缀/leader/**** 或者/follower/****,就可以读取或者发送控制指令到follower机无人机。ROS系统会维护一个所有无人机的消息指令队列(Topic),根据索引消息指令队列，就可以实现集群内部的所有无人机的传感器消息和控制指令的共享。
 
-到目前为止已经解决mavros话题重命名的问题，且已经测试完毕，可将通讯模式全部换成ROS通讯，无人机全部数据由本机实时处理，实现分布式编队集群，测试正在进行中。 
+到目前为止已经解决mavros话题重命名的问题，完成了通讯测试，无人机全部数据由本机实时处理，实现分布式编队集群，实机编队测试正在进行中。 具体代码参考：https://github.com/Yangchengshuai/Uav-swarm-formation/tree/main/Distributed
 
 
 
@@ -139,14 +139,11 @@ T265是一个尺寸小、功耗低的完整的嵌入式SLAM解决方案，它将
 3.  无人机起飞前务必确保定位没有飘，可通过输出定位话题信息查看定位情况。
 4.  程序中可调节Kp大小来调整无人机反应速度，后面可以将P调节优化为PD调节，或者如下图所示，更改位置误差与期望速度的函数关系为APM开方控制+限幅度，无人机控制会更加顺滑。
 
-![image-20221116161049175](/home/lab/.config/Typora/typora-user-images/image-20221116161049175.png)
-
-
+![img](https://github.com/Yangchengshuai/Uav-swarm-formation/blob/main/image/PV.jpeg)
 
 5. 无人机在自动启飞模式下无法切换为手动控制，如果想将无人机切换成手动控制需要将无人机切换到其他模式下方可手动控制飞行或降落。
 
-6. 分布式集群代码已经进行优化，方便进行二次开发。首先需要将变量参数化，方便改动；其次函数、变量需要重命名使得更易于理解。
-
+6. 分布式集群代码已经进行优化，方便进行二次开发。详情可见：https://github.com/Yangchengshuai/Uav-swarm-formation/tree/main/Distributed
 7. 后面需要把路径规划模块加进去进行避障
 
 
