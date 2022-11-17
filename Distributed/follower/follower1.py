@@ -24,13 +24,13 @@ class Follower_uav(object):
         self.key = 0
 
         #避障数组初始化
-        self.vehicles_avoid_control = numpy.zeros(self.uav_num, 3)
-        self.my_avoid = numpy.zeros(1, 3)
+        self.vehicles_avoid_control = numpy.zeros((self.uav_num, 3))
+        self.my_avoid = numpy.zeros((1, 3))
         # 期望编队数组初始化
-        self.expect_formation = numpy.zeros(1, 3)  #是一个3*1数组
+        self.expect_formation = numpy.zeros((1, 3))  #是一个3*1数组
 
         #储存各无人机的位置信息
-        self.pose = numpy.zeros(self.vehicle_num, 3)
+        self.pose = numpy.zeros((self.uav_num, 3))
 
         # 位置信息
         self.follower1_pose = PoseStamped()
@@ -72,8 +72,8 @@ class Follower_uav(object):
         while True:
             data, address = s.recvfrom(65535)
             self.key = int(data)  #字符串转整型
-            # self.my_avoid = self.cmd_leader_avoid[self.id + 2]
         s.close()  #必须加这句，不加这句将导致端口不可重用
+
     
     #计算避障数组
     def calculateAvoid(self):
@@ -81,15 +81,15 @@ class Follower_uav(object):
         aid_vec1 = [1, 0, 0]
         aid_vec2 = [0, 1, 0]
         # 对pose数组赋值，赋值的顺序，与输出的避障数组对应的
-        self.pose[0] = [self.leader_Pose.pose.position.x,self.leader_Pose.pose.position.y,self.leader_Pose.pose.position.z] + startPosition["leader"]
-        self.pose[1] = [self.follower1_pose.pose.position.x,self.follower1_pose.pose.position.y,self.follower1_pose.pose.position.z] + startPosition["follower1"]
-        self.pose[2] = [self.follower2_pose.pose.position.x,self.follower2_pose.pose.position.y,self.follower2_pose.pose.position.z] + startPosition["follower2"]
+        self.pose[0] = [self.leader_Pose.pose.position.x,self.leader_Pose.pose.position.y,self.leader_Pose.pose.position.z] + startPosition["leader"][0]
+        self.pose[1] = [self.follower1_pose.pose.position.x,self.follower1_pose.pose.position.y,self.follower1_pose.pose.position.z] + startPosition["follower1"][0]
+        self.pose[2] = [self.follower2_pose.pose.position.x,self.follower2_pose.pose.position.y,self.follower2_pose.pose.position.z] + startPosition["follower2"][0]
         
         # 计算避障数组
         while not rospy.is_shutdown():
-            for i in range(self.vehicle_num):  #对于每一架无人机
+            for i in range(self.uav_num):  #对于每一架无人机
                 position1 = self.pose[i]
-                for j in range(1, self.vehicle_num - i):
+                for j in range(1, self.uav_num - i):
                     position2 = self.pose[i + j]
                     dir_vec = position1 - position2
                     k = 1 - numpy.linalg.norm(dir_vec) / avoid_radius
@@ -162,9 +162,9 @@ class Follower_uav(object):
             #self.leaderPose[0] + self.expect_formation[0] 这两个是相对于leader系下的目标位置
             #输出的速度是要相对于自身的，所以要转化到无人机自身坐标系：减去初始位置startPosition，即可到自身坐标系下
         self.my_avoid = self.vehicles_avoid_control[self.id] 
-        self.cmd_vel_enu.twist.linear.x = self.Kp * ((self.leaderPose.pose.position.x + self.expect_formation[0] - startPosition["follower1"][0] - self.pose.pose.position.x))
-        self.cmd_vel_enu.twist.linear.y = self.Kp * ((self.leaderPose.pose.position.y + self.expect_formation[1] - startPosition["follower1"][1] - self.pose.pose.position.y))
-        self.cmd_vel_enu.twist.linear.z = self.Kp * ((self.leaderPose.pose.position.z + self.expect_formation[2] - startPosition["follower1"][2] - self.pose.pose.position.z))
+        self.cmd_vel_enu.twist.linear.x = self.Kp * ((self.leaderPose.pose.position.x + self.expect_formation[0] - startPosition["follower1"][0][0] - self.pose.pose.position.x))
+        self.cmd_vel_enu.twist.linear.y = self.Kp * ((self.leaderPose.pose.position.y + self.expect_formation[1] - startPosition["follower1"][0][1] - self.pose.pose.position.y))
+        self.cmd_vel_enu.twist.linear.z = self.Kp * ((self.leaderPose.pose.position.z + self.expect_formation[2] - startPosition["follower1"][0][2] - self.pose.pose.position.z))
         self.cmd_vel_enu.twist.linear.x = self.cmd_vel_enu.twist.linear.x + self.Kp_avoid * self.my_avoid[0]
         self.cmd_vel_enu.twist.linear.y = self.cmd_vel_enu.twist.linear.y + self.Kp_avoid * self.my_avoid[1]
         self.cmd_vel_enu.twist.linear.z = self.cmd_vel_enu.twist.linear.z + self.Kp_avoid * self.my_avoid[2]
@@ -203,7 +203,7 @@ class Follower_uav(object):
             elif self.key in [3,4,5,6,7,8]:
                 self.calculateAvoid()
                 self.target_formation()
-                self.vehicles_avoid_control = numpy.zeros((self.vehicle_num, 3))  #清空躲避数组
+                self.vehicles_avoid_control = numpy.zeros((self.uav_num, 3))  #清空躲避数组
                 try:
                     rate.sleep()
                 except:

@@ -25,13 +25,13 @@ class Leader_uav(object):
         self.key = 0
 
         #避障数组初始化
-        self.vehicles_avoid_control = numpy.zeros(self.uav_num, 3)
-        self.my_avoid = numpy.zeros(1, 3)
+        self.vehicles_avoid_control = numpy.zeros((self.uav_num, 3))
+        self.my_avoid = numpy.zeros((1, 3))
         # 期望编队数组初始化
-        self.expect_formation = numpy.zeros(1, 3)  #是一个1*3数组
+        self.expect_formation = numpy.zeros((1, 3))  #是一个1*3数组
 
         #储存各无人机的位置信息
-        self.pose = numpy.zeros(self.vehicle_num, 3)
+        self.pose = numpy.zeros((self.uav_num, 3))
 
         # 位置信息
         self.follower1_pose = PoseStamped()
@@ -78,30 +78,30 @@ class Leader_uav(object):
     def setLandMode(self):
         rospy.wait_for_service('/leader/mavros/cmd/land')
         try:
-            landService = rospy.ServiceProxy('/leader//mavros/cmd/land', CommandTOL)
+            landService = rospy.ServiceProxy('/leader/mavros/cmd/land', CommandTOL)
             isLanding = landService(altitude=0, latitude=0, longitude=0, min_pitch=0, yaw=0)
         except rospy.ServiceException, e:
             print "service land call failed: %s. The vehicle cannot land " % e
 
     def target_formation(self):
-        if self.cmd_leader_avoid[0][0]==5:  #forward line
+        if self.key==5:  #forward line
             print("leader forward")
             self.cmd_vel_enu.twist.linear.x = self.Kp * (1.6 - self.pose.pose.position.x)
             self.cmd_vel_enu.twist.linear.y = self.Kp * (0 - self.pose.pose.position.y)
             self.cmd_vel_enu.twist.linear.z = self.Kp * (1.1 - self.pose.pose.position.z)
-        if self.cmd_leader_avoid[0][0]==6:  #back line
+        if self.key==6:  #back line
             print("leader back")
             
             self.cmd_vel_enu.twist.linear.x = self.Kp * (-0.5 - self.pose.pose.position.x) 
             self.cmd_vel_enu.twist.linear.y = self.Kp * (0 - self.pose.pose.position.y)
             self.cmd_vel_enu.twist.linear.z = self.Kp * (1.1 - self.pose.pose.position.z)
-        if self.cmd_leader_avoid[0][0]==7:  #left
+        if self.key==7:  #left
             print("leader left")
             
             self.cmd_vel_enu.twist.linear.x = self.Kp * (0 - self.pose.pose.position.x)
             self.cmd_vel_enu.twist.linear.y = self.Kp * (0.65 - self.pose.pose.position.y)
             self.cmd_vel_enu.twist.linear.z = self.Kp * (1.1 - self.pose.pose.position.z)
-        if self.cmd_leader_avoid[0][0]==8:  #right
+        if self.key==8:  #right
             print("leader right")
             
             self.cmd_vel_enu.twist.linear.x = self.Kp * (0 - self.pose.pose.position.x)
@@ -126,15 +126,15 @@ class Leader_uav(object):
         aid_vec1 = [1, 0, 0]
         aid_vec2 = [0, 1, 0]
         # 对pose数组赋值，赋值的顺序，与输出的避障数组对应的
-        self.pose[0] = [self.leader_Pose.pose.position.x,self.leader_Pose.pose.position.y,self.leader_Pose.pose.position.z] + startPosition["leader"]
-        self.pose[1] = [self.follower1_pose.pose.position.x,self.follower1_pose.pose.position.y,self.follower1_pose.pose.position.z] + startPosition["follower1"]
-        self.pose[2] = [self.follower2_pose.pose.position.x,self.follower2_pose.pose.position.y,self.follower2_pose.pose.position.z] + startPosition["follower2"]
+        self.pose[0] = [self.leader_Pose.pose.position.x,self.leader_Pose.pose.position.y,self.leader_Pose.pose.position.z] + startPosition["leader"][0]
+        self.pose[1] = [self.follower1_pose.pose.position.x,self.follower1_pose.pose.position.y,self.follower1_pose.pose.position.z] + startPosition["follower1"][0]
+        self.pose[2] = [self.follower2_pose.pose.position.x,self.follower2_pose.pose.position.y,self.follower2_pose.pose.position.z] + startPosition["follower2"][0]
         
         # 计算避障数组
         while not rospy.is_shutdown():
-            for i in range(self.vehicle_num):  #对于每一架无人机
+            for i in range(self.uav_num):  #对于每一架无人机
                 position1 = self.pose[i]
-                for j in range(1, self.vehicle_num - i):
+                for j in range(1, self.uav_num - i):
                     position2 = self.pose[i + j]
                     dir_vec = position1 - position2
                     k = 1 - numpy.linalg.norm(dir_vec) / avoid_radius
@@ -191,7 +191,7 @@ class Leader_uav(object):
             elif self.key in [5,6,7,8]:
                 self.calculateAvoid()
                 self.target_formation()
-                self.vehicles_avoid_control = numpy.zeros((self.vehicle_num, 3))  #清空躲避数组
+                self.vehicles_avoid_control = numpy.zeros((self.uav_num, 3))  #清空躲避数组
                 try:
                     rate.sleep()
                 except:

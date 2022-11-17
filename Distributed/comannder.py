@@ -35,8 +35,6 @@ class Commander(object):
         s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
         PORT = 1115
         network = '<broadcast>'
-        # data = str(self.cmd) + "," + "0" + "," + "0" + "," + self.listToStr(self.pose[0].tolist()) + "," + self.listToStr(
-        #     self.vehicles_avoid_control.flatten().tolist())  #是一个一维数组字符串
         data = str(self.cmd)
         s.sendto(data.encode('utf-8'), (network, PORT))
         # print(data)

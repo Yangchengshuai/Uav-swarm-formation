@@ -3,8 +3,11 @@
 import numpy as np
 
 #这是leader系下的坐标
-formation_dict_3 = {"line": np.array([[0,0,0],[0, 0.9, 0], [0, -0.9, 0]]), "triangle": np.array([[0,0,0],[-0.9, 0.7, 0], [-0.9, -0.7, 0]])}
-startPosition_3={"leader": np.array[0,0,0],"follower1": np.array[0,1,0],"follower2": np.array[0,-1,0]}
+ #期望编队坐标
+formation_dict_3 = {"line": np.array([[0,0,0],[0, 1.2, 0], [0, -1.2, 0]]), "triangle": np.array([[0,0,0],[-0.9, 0.7, 0], [-0.9, -0.7, 0]])}
+ #起飞位置设置
+startPosition_3={"leader": np.array([0,0,0]),"follower1": np.array([1,0,0]),"follower2": np.array([-1,0,0])}
+
 formation_dict_6 = {
     "origin": np.array([[3, 0, 0], [0, 3, 0], [3, 3, 0], [0, 6, 0], [3, 6, 0]]),
     "T": np.array([[4, 0, 0], [2, 0, 0], [2, 0, -2], [2, 0, -4], [2, 0, -6]]),

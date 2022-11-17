@@ -3,7 +3,7 @@
 ## 集群控制简介
 多机器人群体控制系统一般分为**集中式控制结构**和**分布式控制结构**。
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/3734a1d9e822479cb50444bf545bee6c.jpeg)
+![img](https://github.com/Yangchengshuai/Uav-swarm-formation/blob/main/image/contorlType.jpg)
 
 **集中式控制结构：**
 一个主控单元，集中掌握了环境中全局信息和所有机器人的信息，进行集中式处理任务与资源分配由主控单元合理分配给每一个机器人，每个机器人只需负责数据的输入和输出，数据的存储和控制处理由主控执行。结构较为简单，系统管理方便。
@@ -35,7 +35,9 @@
 本系统通讯采用WiFi无线通讯，主控机与无人机需要安装WiFi模块，在同一WiFi路由下进行socket字节流通讯和ROS话题、服务通讯。另外可以扩展添加UWB机间测距信号，用相对距离来保持编队队形。
 
 #### 软件系统结构
-![follower机的节点和话题](https://img-blog.csdnimg.cn/2773c691191c4d079f256728d6e929f7.png)![ROS话题](https://img-blog.csdnimg.cn/899b2bacdc684e2698cd192915a40817.png)
+![img](https://github.com/Yangchengshuai/Uav-swarm-formation/blob/main/image/Distributed_uav_swarm.png)
+
+![img](https://github.com/Yangchengshuai/Uav-swarm-formation/blob/main/image/topic.png)
 
 **软件运行流程**：
 
