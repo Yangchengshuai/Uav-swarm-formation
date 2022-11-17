@@ -44,7 +44,7 @@ class Leader_uav(object):
         self.Kt=1.0 #起飞油门系数
         self.Kp = 0.35 #飞行响应系数
         self.Kp_avoid = 0.3
-        self.vel_max = 0.5
+        self.vel_max = 0.4
 
         #ROS话题、服务
         self.follower1_pose_sub = rospy.Subscriber("/follower1/mavros/local_position/pose", PoseStamped, self.follower1_pose_callback, queue_size=1)
@@ -86,27 +86,27 @@ class Leader_uav(object):
     def target_formation(self):
         if self.key==5:  #forward line
             print("leader forward")
-            self.cmd_vel_enu.twist.linear.x = self.Kp * (1.6 - self.pose.pose.position.x)
-            self.cmd_vel_enu.twist.linear.y = self.Kp * (0 - self.pose.pose.position.y)
-            self.cmd_vel_enu.twist.linear.z = self.Kp * (1.1 - self.pose.pose.position.z)
+            self.cmd_vel_enu.twist.linear.x = self.Kp * (1.6 - self.leader_Pose.pose.position.x)
+            self.cmd_vel_enu.twist.linear.y = self.Kp * (0 - self.leader_Pose.pose.position.y)
+            self.cmd_vel_enu.twist.linear.z = self.Kp * (1.1 - self.leader_Pose.pose.position.z)
         if self.key==6:  #back line
             print("leader back")
             
-            self.cmd_vel_enu.twist.linear.x = self.Kp * (-0.5 - self.pose.pose.position.x) 
-            self.cmd_vel_enu.twist.linear.y = self.Kp * (0 - self.pose.pose.position.y)
-            self.cmd_vel_enu.twist.linear.z = self.Kp * (1.1 - self.pose.pose.position.z)
+            self.cmd_vel_enu.twist.linear.x = self.Kp * (-0.5 - self.leader_Pose.pose.position.x) 
+            self.cmd_vel_enu.twist.linear.y = self.Kp * (0 - self.leader_Pose.pose.position.y)
+            self.cmd_vel_enu.twist.linear.z = self.Kp * (1.1 - self.leader_Pose.pose.position.z)
         if self.key==7:  #left
             print("leader left")
             
-            self.cmd_vel_enu.twist.linear.x = self.Kp * (0 - self.pose.pose.position.x)
-            self.cmd_vel_enu.twist.linear.y = self.Kp * (0.65 - self.pose.pose.position.y)
-            self.cmd_vel_enu.twist.linear.z = self.Kp * (1.1 - self.pose.pose.position.z)
+            self.cmd_vel_enu.twist.linear.x = self.Kp * (0 - self.leader_Pose.pose.position.x)
+            self.cmd_vel_enu.twist.linear.y = self.Kp * (0.65 - self.leader_Pose.pose.position.y)
+            self.cmd_vel_enu.twist.linear.z = self.Kp * (1.1 - self.leader_Pose.pose.position.z)
         if self.key==8:  #right
             print("leader right")
             
-            self.cmd_vel_enu.twist.linear.x = self.Kp * (0 - self.pose.pose.position.x)
-            self.cmd_vel_enu.twist.linear.y = self.Kp * (-0.5 - self.pose.pose.position.y)
-            self.cmd_vel_enu.twist.linear.z = self.Kp * (1.1 - self.pose.pose.position.z)
+            self.cmd_vel_enu.twist.linear.x = self.Kp * (0 - self.leader_Pose.pose.position.x)
+            self.cmd_vel_enu.twist.linear.y = self.Kp * (-0.5 - self.leader_Pose.pose.position.y)
+            self.cmd_vel_enu.twist.linear.z = self.Kp * (1.1 - self.leader_Pose.pose.position.z)
 
         self.my_avoid = self.vehicles_avoid_control[self.id]
         self.cmd_vel_enu.twist.linear.x = self.cmd_vel_enu.twist.linear.x + self.Kp_avoid * self.my_avoid[0]
@@ -126,9 +126,9 @@ class Leader_uav(object):
         aid_vec1 = [1, 0, 0]
         aid_vec2 = [0, 1, 0]
         # 对pose数组赋值，赋值的顺序，与输出的避障数组对应的
-        self.pose[0] = [self.leader_Pose.pose.position.x,self.leader_Pose.pose.position.y,self.leader_Pose.pose.position.z] + startPosition["leader"][0]
-        self.pose[1] = [self.follower1_pose.pose.position.x,self.follower1_pose.pose.position.y,self.follower1_pose.pose.position.z] + startPosition["follower1"][0]
-        self.pose[2] = [self.follower2_pose.pose.position.x,self.follower2_pose.pose.position.y,self.follower2_pose.pose.position.z] + startPosition["follower2"][0]
+        self.pose[0] = [self.leader_Pose.pose.position.x,self.leader_Pose.pose.position.y,self.leader_Pose.pose.position.z] + startPosition["leader"]
+        self.pose[1] = [self.follower1_pose.pose.position.x,self.follower1_pose.pose.position.y,self.follower1_pose.pose.position.z] + startPosition["follower1"]
+        #self.pose[2] = [self.follower2_pose.pose.position.x,self.follower2_pose.pose.position.y,self.follower2_pose.pose.position.z] + startPosition["follower2"]
         
         # 计算避障数组
         while not rospy.is_shutdown():
@@ -155,7 +155,8 @@ class Leader_uav(object):
                             self.vehicles_avoid_control[i + j][0] - avoid_control[0], self.vehicles_avoid_control[i + j][1] - avoid_control[1],
                             self.vehicles_avoid_control[i + j][2] - avoid_control[2]
                         ])  #两个相近无人机另一个朝反向
-            time.sleep(0.05)
+            time.sleep(0.1)
+            self.vehicles_avoid_control = numpy.zeros((self.vehicle_num, 3))  #躲避命令控制数组清空,重新计算
 
 
     #线程2：监控命令
@@ -172,9 +173,9 @@ class Leader_uav(object):
                     print("Vehicle offboard succeed!")
                 else:
                     print("Vehicle offboard failed!")
-                self.cmd_vel_enu.twist.linear.x = self.Kt * (0 - self.pose.pose.position.x)  #直接用线速度不知道是否可以 答：可以，下面加上了判断是否超过最大线速度
-                self.cmd_vel_enu.twist.linear.y = self.Kt * (0 - self.pose.pose.position.y)
-                self.cmd_vel_enu.twist.linear.z = self.Kt * (self.height - self.pose.pose.position.z)
+                self.cmd_vel_enu.twist.linear.x = self.Kt * (0 - self.leader_Pose.pose.position.x)  #直接用线速度不知道是否可以 答：可以，下面加上了判断是否超过最大线速度
+                self.cmd_vel_enu.twist.linear.y = self.Kt * (0 - self.leader_Pose.pose.position.y)
+                self.cmd_vel_enu.twist.linear.z = self.Kt * (self.height - self.leader_Pose.pose.position.z)
                 self.vel_enu_pub.publish(self.cmd_vel_enu)  #发布东北天下的坐标系指令
                 try:
                     rate.sleep()
@@ -189,9 +190,7 @@ class Leader_uav(object):
             elif self.key == 4:
                 print("triangle")
             elif self.key in [5,6,7,8]:
-                self.calculateAvoid()
                 self.target_formation()
-                self.vehicles_avoid_control = numpy.zeros((self.uav_num, 3))  #清空躲避数组
                 try:
                     rate.sleep()
                 except:
@@ -201,8 +200,11 @@ class Leader_uav(object):
         #args是关键字参数，需要加上名字，写成args=(self,)
         th1 = threading.Thread(target=Leader_uav.receive_cmd, args=(self, ))
         th2 = threading.Thread(target=Leader_uav.cmd, args=(self, ))
-        th2.start()
+        th3 = threading.Thread(target=Leader_uav.calculateAvoid, args=(self, ))
         th1.start()
+        th2.start()
+        th3.start()
+
 
 
 if __name__ == '__main__':
