@@ -138,8 +138,7 @@ class Follower_uav(object):
         #                 self.vehicles_avoid_control[i + j][2] - avoid_control[2]
         #             ])  #两个相近无人机另一个朝反向
         #     time.sleep(0.02)
-        
-        
+              
 
     def setLandMode(self):
         rospy.wait_for_service('/follower1/mavros/cmd/land')
@@ -163,9 +162,9 @@ class Follower_uav(object):
             #self.leaderPose[0] + self.expect_formation[0] 这两个是相对于leader系下的目标位置
             #输出的速度是要相对于自身的，所以要转化到无人机自身坐标系：减去初始位置startPosition，即可到自身坐标系下
         self.my_avoid = self.vehicles_avoid_control[self.id] 
-        self.cmd_vel_enu.twist.linear.x = self.Kp * ((self.leaderPose.pose.position.x + self.expect_formation[0] - startPosition["follower1"][0] - self.follower1_pose.pose.position.x))
-        self.cmd_vel_enu.twist.linear.y = self.Kp * ((self.leaderPose.pose.position.y + self.expect_formation[1] - startPosition["follower1"][1] - self.follower1_pose.pose.position.y))
-        self.cmd_vel_enu.twist.linear.z = self.Kp * ((self.leaderPose.pose.position.z + self.expect_formation[2] - startPosition["follower1"][2] - self.follower1_pose.pose.position.z))
+        self.cmd_vel_enu.twist.linear.x = self.Kp * ((self.leader_Pose.pose.position.x + self.expect_formation[0] - startPosition["follower1"][0] - self.follower1_pose.pose.position.x))
+        self.cmd_vel_enu.twist.linear.y = self.Kp * ((self.leader_Pose.pose.position.y + self.expect_formation[1] - startPosition["follower1"][1] - self.follower1_pose.pose.position.y))
+        self.cmd_vel_enu.twist.linear.z = self.Kp * ((self.leader_Pose.pose.position.z + self.expect_formation[2] - startPosition["follower1"][2] - self.follower1_pose.pose.position.z))
         self.cmd_vel_enu.twist.linear.x = self.cmd_vel_enu.twist.linear.x + self.Kp_avoid * self.my_avoid[0]
         self.cmd_vel_enu.twist.linear.y = self.cmd_vel_enu.twist.linear.y + self.Kp_avoid * self.my_avoid[1]
         self.cmd_vel_enu.twist.linear.z = self.cmd_vel_enu.twist.linear.z + self.Kp_avoid * self.my_avoid[2]
