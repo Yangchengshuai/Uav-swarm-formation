@@ -117,7 +117,9 @@ T265是一个尺寸小、功耗低的完整的嵌入式SLAM解决方案，它将
 
 
 ## 仿真环境方案
-参考XTDrone仿真环境搭建
+参考[XTDrone](https://www.yuque.com/xtdrone/manual_cn)仿真环境搭建
+无人机编队视频展示：[四旋翼集群编队](https://b23.tv/wfWW7J7)
+参考文档链接：[集群仿真](https://www.yuque.com/u29056275/ut351y/hxszio69mwy5v4t5)
 
 
 ## 系统使用说明及功能描述
